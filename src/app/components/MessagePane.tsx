@@ -3,6 +3,8 @@ import PersonIcon from '@mui/icons-material/Person';
 import { faker } from '@faker-js/faker';
 import React, { useEffect, useRef, useState} from "react";
 import { unstable_noStore as noStore } from "next/cache";
+import MessageBox from "./MessageBox";
+import MessageCard from "./MessageCard";
 
 export default function MessagePane() {
 
@@ -18,6 +20,7 @@ export default function MessagePane() {
   }
 
   const [messages, setMessages] = useState(dummyData);
+  const [input, setInput] = useState("");
 
   const messagesEndRef = useRef<null | HTMLDivElement>(null)
 
@@ -38,7 +41,7 @@ export default function MessagePane() {
       timestamp: new Date().toDateString(),
     };
     setMessages([...messages, newMessage]);
-    console.log(messages);
+    setInput("");
   };
 
 
@@ -61,34 +64,7 @@ export default function MessagePane() {
         direction='column'
         divider={<Divider flexItem />}
       >
-        {messages.map((message, index) => {
-          return (
-            <Card>
-              <CardContent>
-                <Grid container spacing={1}>
-                  <Grid item xs={0.5} display="flex">
-                    <Avatar sx={{ transform: 'scale(0.65)' }}>
-                      <PersonIcon />
-                    </Avatar>
-                  </Grid>
-                  <Grid item xs={2} display="flex">
-                    <Typography display="inline">
-                      {message.username}
-                    </Typography>
-                  </Grid>
-                  <Grid item display="flex">
-                    <Typography display="inline" color="text.secondary">
-                      {message.timestamp}
-                    </Typography>
-                  </Grid>
-                </Grid>
-                <Typography color="text.secondary">
-                  {message.content}
-                </Typography>
-              </CardContent>
-            </Card>
-          );
-        })}
+        <MessageCard messages={messages} />
       </Stack>
       <div ref={messagesEndRef} />
     </Box>
@@ -106,19 +82,7 @@ export default function MessagePane() {
       }}
     >
       <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
-        <TextField
-          id="message"
-          label="Send a message"
-          name="message"
-          autoComplete="off"
-          autoFocus
-          maxRows={4}
-          sx={{
-            width: '100%',
-            height: '100%',
-          }}
-          />
-          {/* <input type="submit" style={{ display: 'none' }} /> */}
+        <MessageBox setInput={setInput} input={input} />
       </Box>
     </Box></>
   );
