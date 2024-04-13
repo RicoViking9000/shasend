@@ -14,6 +14,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useFormState, useFormStatus } from 'react-dom';
+import { authenticate } from '../lib/actions';
 
 function Copyright(props: any) {
   return (
@@ -32,6 +34,8 @@ function Copyright(props: any) {
 // const defaultTheme = createTheme();
 
 export default function SignIn() {
+  const [errorMessage, dispatch] = useFormState(authenticate, undefined);
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -59,7 +63,7 @@ export default function SignIn() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" action={dispatch} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -106,6 +110,9 @@ export default function SignIn() {
                 </Link>
               </Grid>
             </Grid>
+            <Typography variant="body2" color="error">
+              {errorMessage}
+            </Typography>
           </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
