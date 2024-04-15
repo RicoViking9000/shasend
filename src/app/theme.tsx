@@ -15,7 +15,7 @@ export function ThemeWrapper(props: { children: React.ReactNode }) {
         }),
         [prefersDarkMode],
     );
-    
+        
     return (
         <ThemeProvider theme={colorTheme}>
         <div>
