@@ -14,7 +14,7 @@ import MessagePane from "../components/MessagePane";
 export default function Home() {
 
   return (
-    <ThemeWrapper>
+    // <ThemeWrapper>
       <Grid container spacing={3}>
         <Grid>
           <UserList displayName="John Doe" lastActive="Active 10 minutes ago" />
@@ -23,7 +23,7 @@ export default function Home() {
           <MessagePane />
         </Grid>
       </Grid>
-    </ThemeWrapper>
+    // </ThemeWrapper>
   );
 }
 
