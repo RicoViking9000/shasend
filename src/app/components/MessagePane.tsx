@@ -3,25 +3,43 @@
 import { Avatar, Box, Button, Card, CardContent, Divider, Grid, List, ListItem, ListItemAvatar, ListItemText, Stack, TextField, Typography } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import { faker } from '@faker-js/faker';
-import React, { useEffect, useRef, useState} from "react";
+import React, { use, useEffect, useRef, useState} from "react";
 import { unstable_noStore as noStore } from "next/cache";
 import MessageBox from "./MessageBox";
 import MessageCard from "./MessageCard";
+import { createMessage, getMessagesByChannel } from "../lib/database";
+import { handleSendMessage } from "../lib/actions";
 
-export default function MessagePane() {
+interface Message {
+  id: string;
+  timestamp: Date;
+  content: string | null;
+  authorID: string;
+  channelID: string;
+}
+
+export default function MessagePane({
+  channelID,
+  loggedInID,
+}: {
+  channelID: string;
+  loggedInID: string;
+}) {
 
   noStore();
 
-  var dummyData = []
-  for (let i = 0; i < 25; i++) {
-    dummyData.push({
-      content: faker.lorem.paragraph(),
-      username: faker.internet.userName(),
-      timestamp: faker.date.anytime().toDateString(),
-    });
-  }
+  // var dummyData = []
+  // for (let i = 0; i < 25; i++) {
+  //   dummyData.push({
+  //     content: faker.lorem.paragraph(),
+  //     username: faker.internet.userName(),
+  //     timestamp: faker.date.anytime().toDateString(),
+  //   });
+  // }
 
-  const [messages, setMessages] = useState(dummyData);
+  // var messageData = await getMessagesByChannel(channelID);
+
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
 
   const messagesEndRef = useRef<null | HTMLDivElement>(null)
@@ -34,16 +52,46 @@ export default function MessagePane() {
     scrollToBottom()
   }, [messages]);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const newMessage = {
-      content: data.get('message') as string,
-      username: 'You',
-      timestamp: new Date().toDateString(),
+  useEffect(() => {
+    const fetchMessages = async () => {
+      const messages = await getMessagesByChannel(channelID);
+      setMessages(messages);
     };
-    setMessages([...messages, newMessage]);
-    setInput("");
+
+    fetchMessages();
+  }, [messages]);
+
+  const sendMessageWithData = handleSendMessage.bind(null, loggedInID, channelID, setInput, messages, setMessages);
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    useEffect(() => {
+
+      const sendMessage = async () => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        const newMessage = await createMessage(
+          loggedInID,
+          channelID,
+          data.get('message') as string,
+        );
+        setMessages([...messages, newMessage]);
+        setInput("");
+      };
+      sendMessage();
+    }
+    , [messages]);
+    // event.preventDefault();
+    // const data = new FormData(event.currentTarget);
+    // const newMessage = await createMessage(
+    //   loggedInID,
+    //   channelID,
+    //   data.get('message') as string,
+    // );
+    // const newMessage = {
+    //   content: data.get('message') as string,
+    //   username: 'You',
+    //   timestamp: new Date().toDateString(),
+    // };
   };
 
 
@@ -57,17 +105,11 @@ export default function MessagePane() {
         overflow: 'scroll',
         alignContent: 'flex-start',
         alignSelf: 'flex-end',
-        padding: '1rem',
-        margin: '1rem',
+        padding: '0.5rem',
+        marginX: '1rem',
+        marginY: '0.33rem',
       }}
     >
-      <Stack
-        spacing={2}
-        direction='column'
-        divider={<Divider flexItem />}
-      >
-        <MessageCard messages={messages} />
-      </Stack>
       <div ref={messagesEndRef} />
     </Box>
     <Box
@@ -75,12 +117,13 @@ export default function MessagePane() {
         width: '100%',
         minWidth: '77vw',
         maxWidth: "77vw",
-        maxHeight: '15vh',
+        maxHeight: '18vh',
         overflow: 'scroll',
         alignContent: 'flex-start',
         alignSelf: 'flex-end',
-        padding: '1rem',
-        margin: '1rem',
+        padding: '0.5rem',
+        marginX: '1rem',
+        marginY: '0.33rem',
       }}
     >
       <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>

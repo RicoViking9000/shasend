@@ -4,9 +4,10 @@ import { redirect } from 'next/navigation';
 import { signIn } from '../../auth';
 import { AuthError } from 'next-auth';
 import { z } from 'zod';
-import { createChannel, getUser, getUserByEmail, prisma } from './database';
+import { createChannel, createMessage, getUser, getUserByEmail, prisma } from './database';
 import { cookies } from 'next/headers';
 import { decrypt } from './session';
+import React from 'react';
  
 export async function authenticate(
   prevState: string | undefined,
@@ -90,5 +91,34 @@ export async function handleCreateChannel(
   } catch (error) {
     console.error('Failed to create channel:', error);
     return 'Failed to create channel: ' + error;
+  }
+}
+
+export async function handleSendMessage(
+  authorID: string,
+  channelID: string,
+  setInput: React.Dispatch<React.SetStateAction<string>>,
+  messages: any[],
+  setMessages: React.Dispatch<React.SetStateAction<any[]>>,
+  formData: FormData
+) {
+  try {
+    const content = formData.get('message') as string;
+
+    const message = await createMessage(
+      authorID,
+      channelID,
+      content,
+    );
+
+    setMessages([...messages, message]);
+
+    setInput('');
+    
+    return message;
+  }
+  catch (error) {
+    console.error('Failed to send message:', error);
+    return 'Failed to send message: ' + error;
   }
 }
