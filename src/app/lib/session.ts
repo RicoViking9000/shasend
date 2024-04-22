@@ -58,3 +58,8 @@ export async function updateSession() {
 export function deleteSession() {
   cookies().delete('session')
 }
+
+export async function getSession() {
+  const session = cookies().get('session')?.value
+  return await decrypt(session)
+}

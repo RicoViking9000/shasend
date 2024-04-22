@@ -1,3 +1,5 @@
+'use client'
+
 import { Avatar, Box, Button, Card, CardContent, Divider, Grid, List, ListItem, ListItemAvatar, ListItemText, Stack, TextField, Typography } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import { faker } from '@faker-js/faker';

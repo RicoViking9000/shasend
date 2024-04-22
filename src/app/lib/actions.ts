@@ -31,8 +31,6 @@ export async function handleCreateChannel(
   prevState: any,
   formData: FormData
 ) {
-  console.log('inside handle create')
-  console.log('formData:', formData)
   try {
     const parsedCredentials = z
       .object({ email: z.string().min(2) })
@@ -46,8 +44,6 @@ export async function handleCreateChannel(
       };
     }
 
-    console.log('parsedCredentials:', parsedCredentials);
-
     const { email } = parsedCredentials.data;
     const recipient = await getUserByEmail(email);
     if (!recipient) {
@@ -59,7 +55,6 @@ export async function handleCreateChannel(
     const cookie = cookies().get('session')?.value
     const session = await decrypt(cookie)
     const userID: any = session?.userId
-    console.log('userID:', userID)
     const user = await getUser(userID)
     if (!user) {
       return {

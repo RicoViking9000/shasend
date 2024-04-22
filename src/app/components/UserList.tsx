@@ -6,22 +6,29 @@ import UserEntry from "./UserEntry";
 import { faker } from '@faker-js/faker';
 import { Add } from "@mui/icons-material";
 import CreateChannelButton from "./CreateChannelButton";
+import { getChannelsByUser, getMostRecentMessageByChannel, getUser, getUserByEmail } from "../lib/database";
+import { useSession } from "next-auth/react";
+import { Session } from "next-auth";
 
-export default function UserList({
-  displayName,
-  lastActive,
+
+export default async function UserList({
+  email,
 }: {
-  displayName: string;
-  lastActive: string;
+  email: string;
 }) {
 
-  var usernames: string[] = [];
-  var messages: string[] = [];
+  // const { data: session } = useSession();
+  // var loggedInID = session?.user?.id || '';
 
-  for (let i = 0; i < 25; i++) {
-    usernames.push(faker.internet.userName());
-    messages.push(faker.lorem.sentence(10));
+  // console.log("UserList: session: ", session)
+
+  if (!email) {
+    return null;
   }
+
+  const loggedInUser = await getUserByEmail(email || '');
+  const loggedInID = loggedInUser?.id;
+  const channels = await getChannelsByUser(loggedInID || "")
 
   return (
 
@@ -33,15 +40,22 @@ export default function UserList({
       padding: '1%',
     }}>
       <CreateChannelButton />
-      {usernames.map((username, index) =>  {
+      {channels.map(async (channel, index) =>  {
+        const channelUsernamesWithoutSelf = await Promise.all(channel.userIDs.filter(userID => userID !== loggedInID).map(async userID => {
+          const user = await getUser(userID);
+          return user?.name;
+        }
+        ));
+        const lastActive = (await getMostRecentMessageByChannel(channel.id))?.timestamp;
 
         return (
-          <UserEntry displayName={username} lastActive={messages[index]} />
+          <UserEntry
+            displayName={channelUsernamesWithoutSelf.join(', ') || ""}
+            lastActive={lastActive ? lastActive.toTimeString() : ""}
+            channelID={channel.id}
+          />
         );
-      
       })}
-    
-    
     </List>
   );
 }

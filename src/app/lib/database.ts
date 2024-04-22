@@ -47,46 +47,58 @@ export async function updateUser(id: string, data: {  }) {
 }
 
 export async function createMessage(
-  authorId: string,
-  channelId: string,
+  authorID: string,
+  channelID: string,
   content: string,
 ) {
   const message = await prisma.message.create({
     data: {
-      authorId,
-      channelId,
+      authorID,
+      channelID,
       content,
     },
   })
   return message
 }
 
-export async function getMessagesByChannel(channelId: string) {
+export async function getMessagesByChannel(channelID: string) {
   const messages = await prisma.message.findMany({
     where: {
-      channelId,
+      channelID,
     },
   })
   return messages
 }
 
-export async function getMessagesByUser(authorId: string) {
+export async function getMostRecentMessageByChannel(channelID: string) {
+  const message = await prisma.message.findFirst({
+    where: {
+      channelID,
+    },
+    orderBy: {
+      timestamp: 'desc',
+    },
+  })
+  return message
+}
+
+export async function getMessagesByUser(authorID: string) {
   const messages = await prisma.message.findMany({
     where: {
-      authorId,
+      authorID,
     },
   })
   return messages
 }
 
 export async function getMessagesByUserAndChannel(
-  authorId: string,
-  channelId: string,
+  authorID: string,
+  channelID: string,
 ) {
   const messages = await prisma.message.findMany({
     where: {
-      authorId,
-      channelId,
+      authorID,
+      channelID,
     },
   })
   return messages
@@ -102,10 +114,10 @@ export async function createChannel(userIDs: string[]) {
   return channel
 }
 
-export async function addUsersToChannel(channelId: string, userIDs: string[]) {
+export async function addUsersToChannel(channelID: string, userIDs: string[]) {
   const channel = await prisma.channel.update({
     where: {
-      id: channelId,
+      id: channelID,
     },
     data: {
       userIDs: {
