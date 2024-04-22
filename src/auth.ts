@@ -5,7 +5,7 @@ import { z } from 'zod';
 import google from 'next-auth/providers/google';
 import discord from 'next-auth/providers/discord';
 import { getUserByEmail } from './app/lib/database';
-import { Cipher, createCipheriv, createDecipheriv } from 'crypto';
+import { Cipher, createCipheriv, createDecipheriv, createHash } from 'crypto';
 import { createUser } from './app/lib/database';
 import { createSession } from './app/lib/session';
 import { redirect } from 'next/navigation';
@@ -48,8 +48,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             const user = await getUserByEmail(email);
             if (!user) return null;
 
-            const decipherKey = createDecipheriv('aes-192-cbc', email, Buffer.from('a1b2c3d4e5f6g7h8'));
-            const decryptedPassword = decipherKey.update(user.password, 'hex', 'utf8') + decipherKey.final('utf8');
+            const key = createHash('sha256').update(String(email)).digest('base64').slice(0, 24);
+            const decipher = createDecipheriv('aes-192-cbc', key, Buffer.from('a1b2c3d4e5f6g7h8'));
+            const decryptedPassword = decipher.update(user.password, 'hex', 'utf8') + decipher.final('utf8');
             const passwordsMatch = password === decryptedPassword;
 
 

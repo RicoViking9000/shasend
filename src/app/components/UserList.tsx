@@ -1,9 +1,11 @@
-import { Avatar, List, ListItem, ListItemAvatar, ListItemText } from "@mui/material";
+import { Avatar, Button, Fab, List, ListItem, ListItemAvatar, ListItemText } from "@mui/material";
 import ImageIcon from "@mui/icons-material/Image";
 import WorkIcon from "@mui/icons-material/Work";
 import BeachAccessIcon from "@mui/icons-material/BeachAccess";
 import UserEntry from "./UserEntry";
 import { faker } from '@faker-js/faker';
+import { Add } from "@mui/icons-material";
+import CreateChannelButton from "./CreateChannelButton";
 
 export default function UserList({
   displayName,
@@ -30,6 +32,7 @@ export default function UserList({
       overflow: 'scroll',
       padding: '1%',
     }}>
+      <CreateChannelButton />
       {usernames.map((username, index) =>  {
 
         return (

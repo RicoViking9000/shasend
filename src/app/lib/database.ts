@@ -92,11 +92,25 @@ export async function getMessagesByUserAndChannel(
   return messages
 }
 
-export async function createChannel() {
+export async function createChannel(userIDs: string[]) {
   const channel = await prisma.channel.create({
     data: {
-      userIDs: [],
+      userIDs: userIDs,
       messageIDs: [],
+    },
+  })
+  return channel
+}
+
+export async function addUsersToChannel(channelId: string, userIDs: string[]) {
+  const channel = await prisma.channel.update({
+    where: {
+      id: channelId,
+    },
+    data: {
+      userIDs: {
+        push: userIDs,
+      },
     },
   })
   return channel
@@ -109,4 +123,15 @@ export async function getChannel(id: string) {
     },
   })
   return channel
+}
+
+export async function getChannelsByUser(userID: string) {
+  const channels = await prisma.channel.findMany({
+    where: {
+      userIDs: {
+        has: userID,
+      },
+    },
+  })
+  return channels
 }

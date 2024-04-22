@@ -2,13 +2,12 @@
 
 import { z } from 'zod';
 import { getUserByEmail } from '../../app/lib/database';
-import { createCipheriv } from 'crypto';
+import { createCipheriv, createHash, randomBytes } from 'crypto';
 import { createUser } from '../../app/lib/database';
 import { createSession } from '../../app/lib/session';
 import { redirect } from 'next/navigation';
 
 export async function signUp(prevState: any, formData: FormData) {
-  console.log("formdata" + formData);
   const parsedCredentials = z
     .object({ 
       firstName: z.string().min(2),
@@ -23,7 +22,6 @@ export async function signUp(prevState: any, formData: FormData) {
       password: formData.get('password'),
     });
 
-    console.log("parsedCredentials" + parsedCredentials);
     // If any form fields are invalid, return early
     if (!parsedCredentials.success) {
       return {
@@ -41,8 +39,9 @@ export async function signUp(prevState: any, formData: FormData) {
       }
     }
     
-    const cipherKey = createCipheriv('aes-192-cbc', email, Buffer.from('a1b2c3d4e5f6g7h8'));
-    const encryptedPassword = cipherKey.update(password, 'utf8', 'hex') + cipherKey.final('hex');
+    const key = createHash('sha256').update(String(email)).digest('base64').slice(0, 24);
+    const cipher = createCipheriv('aes-192-cbc', key, Buffer.from('a1b2c3d4e5f6g7h8'));
+    const encryptedPassword = cipher.update(password, 'utf8', 'hex') + cipher.final('hex');
 
     // Create the user
     const user = await createUser(firstName + ' ' + lastName, email, encryptedPassword);
