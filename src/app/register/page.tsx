@@ -14,16 +14,13 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useFormState, useFormStatus } from 'react-dom';
+import { signUp } from '../lib/register';
 
 export default function SignUp() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+
+  const [state, action] = useFormState(signUp, undefined);
+  const { pending } = useFormStatus();
 
   return (
     <Container component="main" maxWidth="xs">
@@ -42,7 +39,7 @@ export default function SignUp() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+        <Box component="form" action={action} sx={{ mt: 3 }}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -54,6 +51,7 @@ export default function SignUp() {
                 label="First Name"
                 autoFocus
               />
+              {state?.errors?.firstName && <p>{state.errors.firstName}</p>}
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -64,6 +62,7 @@ export default function SignUp() {
                 name="lastName"
                 autoComplete="family-name"
               />
+               {state?.errors?.lastName && <p>{state.errors.lastName}</p>}
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -74,6 +73,7 @@ export default function SignUp() {
                 name="email"
                 autoComplete="email"
               />
+               {state?.errors?.email && <p>{state.errors.email}</p>}
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -85,6 +85,16 @@ export default function SignUp() {
                 id="password"
                 autoComplete="new-password"
               />
+               {state?.errors?.password && (
+                <div>
+                  <p>Password must:</p>
+                  <ul>
+                    {state.errors.password.map((error) => (
+                      <li key={error}>- {error}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </Grid>
             <Grid item xs={12}>
               <FormControlLabel
@@ -97,6 +107,7 @@ export default function SignUp() {
             type="submit"
             fullWidth
             variant="contained"
+            aria-disabled={pending}
             sx={{ mt: 3, mb: 2 }}
           >
             Sign Up

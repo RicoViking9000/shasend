@@ -1,5 +1,3 @@
-'use server'
-
 import { PrismaClient } from '@prisma/client'
 
 export const prisma = new PrismaClient()
@@ -20,7 +18,7 @@ export async function createUser(
   return user
 }
 
-export async function getUser(id: number) {
+export async function getUser(id: string) {
   const user = await prisma.user.findUnique({
     where: {
       id,
@@ -29,7 +27,16 @@ export async function getUser(id: number) {
   return user
 }
 
-export async function updateUser(id: number, data: {  }) {
+export async function getUserByEmail(email: string) {
+  const user = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  })
+  return user
+}
+
+export async function updateUser(id: string, data: {  }) {
   const user = await prisma.user.update({
     where: {
       id,
@@ -40,61 +47,62 @@ export async function updateUser(id: number, data: {  }) {
 }
 
 export async function createMessage(
-  userID: number,
-  channelID: number,
+  authorId: string,
+  channelId: string,
   content: string,
 ) {
   const message = await prisma.message.create({
     data: {
-      userID,
-      channelID,
+      authorId,
+      channelId,
       content,
     },
   })
   return message
 }
 
-export async function getMessagesByChannel(channelID: number) {
+export async function getMessagesByChannel(channelId: string) {
   const messages = await prisma.message.findMany({
     where: {
-      channelID,
+      channelId,
     },
   })
   return messages
 }
 
-export async function getMessagesByUser(userID: number) {
+export async function getMessagesByUser(authorId: string) {
   const messages = await prisma.message.findMany({
     where: {
-      userID,
+      authorId,
     },
   })
   return messages
 }
 
 export async function getMessagesByUserAndChannel(
-  userID: number,
-  channelID: number,
+  authorId: string,
+  channelId: string,
 ) {
   const messages = await prisma.message.findMany({
     where: {
-      userID,
-      channelID,
+      authorId,
+      channelId,
     },
   })
   return messages
 }
 
-export async function createChannel(userIDs: string[]) {
+export async function createChannel() {
   const channel = await prisma.channel.create({
     data: {
       userIDs: [],
+      messageIDs: [],
     },
   })
   return channel
 }
 
-export async function getChannel(id: number) {
+export async function getChannel(id: string) {
   const channel = await prisma.channel.findUnique({
     where: {
       id,
