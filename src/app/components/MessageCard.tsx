@@ -1,4 +1,4 @@
-import { Avatar, Card, CardContent, Grid, Typography } from "@mui/material";
+import { Avatar, Card, CardContent, CardHeader, Grid, Typography } from "@mui/material";
 import { Message } from "./MessagePane";
 
 export default function MessageCard({
@@ -13,25 +13,23 @@ export default function MessageCard({
         // const author = await getUser(message.authorID)
       return (
         <Card>
-          <CardContent>
-            <Grid container spacing={1}>
-              <Grid item xs={0.5} display="flex">
-                <Avatar sx={{ transform: 'scale(0.65)' }}>
+          <CardHeader
+            avatar={
+              <Avatar sx={{ 
+                  transform: 'scale(1.15)',
+                  backgroundColor: 'rgba(0, 0, 255, 0.75)',
+                }}>
+                <Typography variant="h6" color={'white'}>
                   {message.authorName?.[0]}
-                </Avatar>
-              </Grid>
-              <Grid item xs={2} display="flex">
-                <Typography display="inline">
-                  {message.authorName}
                 </Typography>
-              </Grid>
-              <Grid item display="flex">
-                <Typography display="inline" color="text.secondary">
-                  {message.timestamp.toLocaleString()}
-                </Typography>
-              </Grid>
-            </Grid>
-            <Typography color="text.secondary">
+              </Avatar>
+            }
+            title={message.authorName}
+            subheader={message.timestamp.toLocaleString()}
+          >
+          </CardHeader>
+          <CardContent>
+            <Typography color="text.secondary" fontSize={'1.1rem'}>
               {message.content}
             </Typography>
           </CardContent>
