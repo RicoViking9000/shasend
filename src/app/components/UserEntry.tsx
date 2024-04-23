@@ -15,7 +15,12 @@ export default function UserEntry({
     <Link href={{
       pathname: '/home/' + channelID,
     }}>
-      <ListItem alignItems="flex-start">
+      <ListItem alignItems="flex-start" sx={{
+        ":hover": {
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          transitionDuration: '0.5s',
+        },
+      }}>
         <ListItemAvatar>
           <Avatar>
             <PersonIcon />

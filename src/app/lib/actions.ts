@@ -4,10 +4,13 @@ import { redirect } from 'next/navigation';
 import { signIn } from '../../auth';
 import { AuthError } from 'next-auth';
 import { z } from 'zod';
-import { createChannel, createMessage, getUser, getUserByEmail, prisma } from './database';
+import { createChannel, createMessage, createMessageAndAddToChannel, getMessagesByChannel, getUser, getUserByEmail, prisma } from './database';
 import { cookies } from 'next/headers';
 import { decrypt } from './session';
 import React from 'react';
+import { PaneState } from '../components/MessagePane';
+import { createCipheriv, createDecipheriv, createHash } from 'crypto';
+import { unstable_noStore as noStore, revalidatePath } from 'next/cache';
  
 export async function authenticate(
   prevState: string | undefined,
@@ -83,7 +86,7 @@ export async function handleCreateChannel(
       });
     }
 
-    // redirect(`/channels/${channel.id}`);
+    redirect(`/channels/${channel.id}`);
 
     return 'success';
 
@@ -95,30 +98,69 @@ export async function handleCreateChannel(
 }
 
 export async function handleSendMessage(
-  authorID: string,
-  channelID: string,
-  setInput: React.Dispatch<React.SetStateAction<string>>,
-  messages: any[],
-  setMessages: React.Dispatch<React.SetStateAction<any[]>>,
-  formData: FormData
+  prevState: PaneState,
+  formData: FormData,
 ) {
-  try {
-    const content = formData.get('message') as string;
-
-    const message = await createMessage(
-      authorID,
-      channelID,
-      content,
-    );
-
-    setMessages([...messages, message]);
-
-    setInput('');
-    
-    return message;
+  const parsedCredentials = z
+    .object({ 
+      content: z.string().min(1),
+      })
+    .safeParse({
+      content: formData.get('message'),
+    });
+  
+    if (!parsedCredentials.success) {
+      console.log(parsedCredentials.error.flatten().fieldErrors)
+    return {
+      messages: prevState.messages,
+      email: prevState.email,
+      channelID: prevState.channelID,
+      errors: parsedCredentials.error.flatten().fieldErrors,
+    };
   }
-  catch (error) {
-    console.error('Failed to send message:', error);
-    return 'Failed to send message: ' + error;
-  }
+
+  const { content } = parsedCredentials.data;
+
+  const user = await getUserByEmail(prevState.email);
+
+  const key = createHash('sha256').update(String(user?.id)).digest('base64').slice(0, 24);
+  const cipher = createCipheriv('aes-192-cbc', key, Buffer.from(user?.email?.slice(0, 16) || ''));
+  const encrypted = cipher.update(content, 'utf8', 'hex') + cipher.final('hex');
+
+  const message = await createMessageAndAddToChannel(
+    user?.id || '',
+    prevState.channelID,
+    encrypted,
+  );
+
+  redirect(`/channels/${prevState.channelID}`);
+  return {
+    messages: [...prevState.messages, message],
+    email: prevState.email,
+    channelID: prevState.channelID,
+    errors: {},
+  };
+}
+
+export async function getAndDecryptMessages(channelID: string) {
+  noStore()
+  const messageData = await getMessagesByChannel(channelID);
+  const decryptedMessages = await Promise.all(messageData.map(async message => {
+    const user = await getUser(message.authorID);
+    const key = createHash('sha256').update(String(user?.id)).digest('base64').slice(0, 24);
+    const decipher = createDecipheriv('aes-192-cbc', key, Buffer.from(user?.email?.slice(0, 16) || ''));
+    const decrypted = decipher.update(message.content || '', 'hex', 'utf8') + decipher.final('utf8');
+    return {
+      ...message,
+      content: decrypted,
+    };
+  }));
+  const messagesWithMappedAuthors = await Promise.all(decryptedMessages.map(async message => {
+    const author = await getUser((message).authorID);
+    return {
+      ...message,
+      authorName: author?.name || 'Unknown',
+    };
+  }));
+  return messagesWithMappedAuthors;
 }

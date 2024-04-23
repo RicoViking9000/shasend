@@ -61,6 +61,25 @@ export async function createMessage(
   return message
 }
 
+export async function createMessageAndAddToChannel(
+  authorID: string,
+  channelID: string,
+  content: string,
+) {
+  const message = await createMessage(authorID, channelID, content)
+  const channel = await prisma.channel.update({
+    where: {
+      id: channelID,
+    },
+    data: {
+      messageIDs: {
+        push: message.id,
+      },
+    },
+  })
+  return message
+}
+
 export async function getMessagesByChannel(channelID: string) {
   const messages = await prisma.message.findMany({
     where: {

@@ -44,7 +44,6 @@ export default function CreateChannelButton() {
             event.preventDefault();
             const formData = new FormData(event.currentTarget);
             action(formData);
-            console.log('received state ' + state)
             if (state === 'success') {
               handleClose();
             }

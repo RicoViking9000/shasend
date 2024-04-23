@@ -7,23 +7,36 @@ import React, { use, useEffect, useRef, useState} from "react";
 import { unstable_noStore as noStore } from "next/cache";
 import MessageBox from "./MessageBox";
 import MessageCard from "./MessageCard";
-import { createMessage, getMessagesByChannel } from "../lib/database";
-import { handleSendMessage } from "../lib/actions";
+import { createMessage, getMessagesByChannel, getUser, getUserByEmail } from "../lib/database";
+import { getAndDecryptMessages, handleSendMessage } from "../lib/actions";
+import { useFormState } from "react-dom";
+import MessageStack from "./MessageStack";
+import { createDecipheriv, createHash } from "crypto";
 
-interface Message {
+export interface Message {
   id: string;
   timestamp: Date;
   content: string | null;
   authorID: string;
+  authorName: string;
   channelID: string;
+}
+
+export interface PaneState {
+  messages: any[];
+  email: string;
+  channelID: string;
+  errors: Object;
 }
 
 export default function MessagePane({
   channelID,
-  loggedInID,
+  loggedInEmail,
+  messageData,
 }: {
   channelID: string;
-  loggedInID: string;
+  loggedInEmail: string;
+  messageData: any;
 }) {
 
   noStore();
@@ -39,8 +52,18 @@ export default function MessagePane({
 
   // var messageData = await getMessagesByChannel(channelID);
 
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
+  const paneState: PaneState = {
+    messages: messageData,
+    email: loggedInEmail,
+    channelID: channelID,
+    errors: {},
+  };
+
+  const [messages, setMessages] = useState<Message[]>(messageData);
+  const [state, action] = useFormState(handleSendMessage, paneState);
+
+  // message box hooks
+  const [input, setInput] = useState<string>('');
 
   const messagesEndRef = useRef<null | HTMLDivElement>(null)
 
@@ -52,47 +75,6 @@ export default function MessagePane({
     scrollToBottom()
   }, [messages]);
 
-  useEffect(() => {
-    const fetchMessages = async () => {
-      const messages = await getMessagesByChannel(channelID);
-      setMessages(messages);
-    };
-
-    fetchMessages();
-  }, [messages]);
-
-  const sendMessageWithData = handleSendMessage.bind(null, loggedInID, channelID, setInput, messages, setMessages);
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    useEffect(() => {
-
-      const sendMessage = async () => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        const newMessage = await createMessage(
-          loggedInID,
-          channelID,
-          data.get('message') as string,
-        );
-        setMessages([...messages, newMessage]);
-        setInput("");
-      };
-      sendMessage();
-    }
-    , [messages]);
-    // event.preventDefault();
-    // const data = new FormData(event.currentTarget);
-    // const newMessage = await createMessage(
-    //   loggedInID,
-    //   channelID,
-    //   data.get('message') as string,
-    // );
-    // const newMessage = {
-    //   content: data.get('message') as string,
-    //   username: 'You',
-    //   timestamp: new Date().toDateString(),
-    // };
-  };
 
 
   return (
@@ -110,6 +92,7 @@ export default function MessagePane({
         marginY: '0.33rem',
       }}
     >
+      <MessageStack messages={messages} />
       <div ref={messagesEndRef} />
     </Box>
     <Box
@@ -126,8 +109,11 @@ export default function MessagePane({
         marginY: '0.33rem',
       }}
     >
-      <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
-        <MessageBox setInput={setInput} input={input} />
+      <Box component="form" noValidate action={action} sx={{ mt: 3 }}>
+        <MessageBox
+          setInput={setInput}
+          input={input}
+        />
       </Box>
     </Box></>
   );

@@ -1,18 +1,17 @@
-'use client'
 
 import { Divider, Stack } from "@mui/material";
 import MessageCard from "./MessageCard";
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { Message } from "./MessagePane";
+
 
 export default function MessageStack(
   {
-    messageData,
+    messages,
   }: {
-    messageData: any[];
+    messages: Message[];
   }
 ) {
-
-  const [messages, setMessages] = useState(messageData);
   
   return (
     <Stack
@@ -20,7 +19,9 @@ export default function MessageStack(
       direction='column'
       divider={<Divider flexItem />}
     >
-      <MessageCard messages={messages} />
+      {/* <Suspense fallback={<div>Loading...</div>} > */}
+        <MessageCard messages={messages} />
+      {/* </Suspense> */}
     </Stack>
   )
 }

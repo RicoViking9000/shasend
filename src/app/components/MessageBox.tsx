@@ -8,7 +8,6 @@ export default function MessageBox(
   }: {
     input: string;
     setInput: (input: string) => void;
-  
   }
 ) {
 
