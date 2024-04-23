@@ -86,8 +86,6 @@ export async function handleCreateChannel(
       });
     }
 
-    redirect(`/channels/${channel.id}`);
-
     return 'success';
 
 
@@ -124,7 +122,7 @@ export async function handleSendMessage(
   const user = await getUserByEmail(prevState.email);
 
   const key = createHash('sha256').update(String(user?.id)).digest('base64').slice(0, 24);
-  const cipher = createCipheriv('aes-192-cbc', key, Buffer.from(user?.email?.slice(0, 16) || ''));
+  const cipher = createCipheriv('aes-192-cbc', key, Buffer.from('a1b2c3d4e5f6g7h8'));
   const encrypted = cipher.update(content, 'utf8', 'hex') + cipher.final('hex');
 
   const message = await createMessageAndAddToChannel(
@@ -148,7 +146,7 @@ export async function getAndDecryptMessages(channelID: string) {
   const decryptedMessages = await Promise.all(messageData.map(async message => {
     const user = await getUser(message.authorID);
     const key = createHash('sha256').update(String(user?.id)).digest('base64').slice(0, 24);
-    const decipher = createDecipheriv('aes-192-cbc', key, Buffer.from(user?.email?.slice(0, 16) || ''));
+    const decipher = createDecipheriv('aes-192-cbc', key, Buffer.from('a1b2c3d4e5f6g7h8'));
     const decrypted = decipher.update(message.content || '', 'hex', 'utf8') + decipher.final('utf8');
     return {
       ...message,

@@ -50,9 +50,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
             const key = createHash('sha256').update(String(email)).digest('base64').slice(0, 24);
             const decipher = createDecipheriv('aes-192-cbc', key, Buffer.from('a1b2c3d4e5f6g7h8'));
-            const decryptedPassword = decipher.update(user.password, 'hex', 'utf8') + decipher.final('utf8');
+            const decryptedPassword = user.password ? decipher.update(user.password, 'hex', 'utf8') + decipher.final('utf8') : '';
             const passwordsMatch = password === decryptedPassword;
-
 
             if (passwordsMatch) return user;
           }
