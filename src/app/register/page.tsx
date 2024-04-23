@@ -55,7 +55,6 @@ export default function SignUp() {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                required
                 fullWidth
                 id="lastName"
                 label="Last Name"
