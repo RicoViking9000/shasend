@@ -6,7 +6,7 @@ import React, { Suspense } from "react";
 import UserList from "../components/UserList";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { Typography } from '@mui/material';
+import { Skeleton, Typography } from '@mui/material';
 
 export default async function Home() {
 
@@ -19,7 +19,9 @@ export default async function Home() {
   return (
     <Grid container spacing={3}>
       <Grid>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={
+            <Skeleton variant="rectangular" width="20vw" height="98vh" />
+          }>
           <UserList email={email}/>
         </Suspense>
       </Grid>

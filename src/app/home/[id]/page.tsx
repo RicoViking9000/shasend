@@ -6,6 +6,7 @@ import MessagePane from "../../components/MessagePane";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { getAndDecryptMessages } from '@/app/lib/actions';
+import { Skeleton } from '@mui/material';
 
 export default async function Home({ params }: {params: {id: string}}) {
 
@@ -24,7 +25,9 @@ export default async function Home({ params }: {params: {id: string}}) {
     // <SessionProvider>
       <Grid container spacing={3}>
         <Grid>
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={
+            <Skeleton variant="rectangular" width="20vw" height="98vh" />
+          }>
             <UserList email={email}/>
           </Suspense>
         </Grid>
