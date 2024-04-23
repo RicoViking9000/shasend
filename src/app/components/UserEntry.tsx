@@ -1,4 +1,4 @@
-import { Avatar, List, ListItem, ListItemAvatar, ListItemText } from "@mui/material";
+import { Avatar, List, ListItem, ListItemAvatar, ListItemText, Typography } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import Link from "next/link";
 
@@ -22,8 +22,13 @@ export default function UserEntry({
         },
       }}>
         <ListItemAvatar>
-          <Avatar>
-            <PersonIcon />
+          <Avatar sx={{ 
+              transform: 'scale(1.15)',
+              backgroundColor: 'rgba(0, 0, 255, 0.75)',
+            }}>
+            <Typography variant="h6" color={'white'}>
+              {displayName[0]}
+            </Typography>
           </Avatar>
         </ListItemAvatar>
 
