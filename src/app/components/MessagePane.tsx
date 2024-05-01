@@ -1,8 +1,8 @@
 
-import { Avatar, Box, Button, Card, CardContent, Divider, Grid, List, ListItem, ListItemAvatar, ListItemText, Stack, TextField, Typography } from "@mui/material";
+import { Avatar, Box, Button, Card, CardContent, Divider, Grid, List, ListItem, ListItemAvatar, ListItemText, Skeleton, Stack, TextField, Typography } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import { faker } from '@faker-js/faker';
-import React, { use, useEffect, useRef, useState} from "react";
+import React, { Suspense, use, useEffect, useRef, useState} from "react";
 import { unstable_noStore as noStore } from "next/cache";
 import MessageBox from "./MessageBox";
 import MessageCard from "./MessageCard";
@@ -81,8 +81,8 @@ export default function MessagePane({
         marginY: '0.33rem',
       }}
     >
-      <MessageStack messages={messages} />
-      <div ref={messagesEndRef} />
+      <MessageStack channelID={channelID} />
+      
     </Box>
     <Box
       sx={{

@@ -1,17 +1,14 @@
 
 import { Divider, Stack } from "@mui/material";
 import MessageCard from "./MessageCard";
-import { Suspense, useState } from "react";
+import { Suspense, cache, useState } from "react";
 import { Message } from "./MessagePane";
+import { getAndDecryptMessages } from "../lib/actions";
 import MessageCardSkeleton from "./MessageCardSkeleton";
 
 
 export default async function MessageStack(
-  {
-    messages,
-  }: {
-    messages: Message[];
-  }
+  { channelID }: { channelID: string }
 ) {
   
   return (
@@ -25,7 +22,7 @@ export default async function MessageStack(
           <MessageCardSkeleton />
         ))
       } >
-        <MessageCard messages={messages} />
+        <MessageCard channelID={channelID} />
       </Suspense>
     </Stack>
   )

@@ -1,17 +1,33 @@
 import { Avatar, Card, CardContent, CardHeader, Grid, Typography } from "@mui/material";
 import { Message } from "./MessagePane";
+import { cache, useEffect, useRef } from "react";
+import { getAndDecryptMessages } from "../lib/actions";
 
-export default function MessageCard({
-  messages
+export const getMessages = cache(async (channelID: string) => {
+  const messages = await getAndDecryptMessages(channelID);
+  return messages;
+})
+
+
+export default async function MessageCard({
+  channelID
 }: {
-  messages: Message[];
+  channelID: string;
   }
   ) {
+    const messagesEndRef = useRef<null | HTMLDivElement>(null)
+
+    const scrollToBottom = () => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    }
+
+    useEffect(() => {
+      scrollToBottom()
+    }, [await getMessages(channelID)]);
   return (
     <>
-      {messages.map((message) => {
+      {(await getMessages(channelID)).map((message) => (
         // const author = await getUser(message.authorID)
-      return (
         <Card>
           <CardHeader
             avatar={
@@ -34,8 +50,9 @@ export default function MessageCard({
             </Typography>
           </CardContent>
         </Card>
-      );
-    })}
+      )
+    )}
+    <div ref={messagesEndRef} />
     </>
   );
 }
