@@ -3,9 +3,10 @@ import { Divider, Stack } from "@mui/material";
 import MessageCard from "./MessageCard";
 import { Suspense, useState } from "react";
 import { Message } from "./MessagePane";
+import MessageCardSkeleton from "./MessageCardSkeleton";
 
 
-export default function MessageStack(
+export default async function MessageStack(
   {
     messages,
   }: {
@@ -19,9 +20,13 @@ export default function MessageStack(
       direction='column'
       divider={<Divider flexItem />}
     >
-      {/* <Suspense fallback={<div>Loading...</div>} > */}
+      <Suspense fallback={
+        new Array(10).fill(0).map((_) => (
+          <MessageCardSkeleton />
+        ))
+      } >
         <MessageCard messages={messages} />
-      {/* </Suspense> */}
+      </Suspense>
     </Stack>
   )
 }

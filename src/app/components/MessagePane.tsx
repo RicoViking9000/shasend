@@ -1,4 +1,3 @@
-'use client'
 
 import { Avatar, Box, Button, Card, CardContent, Divider, Grid, List, ListItem, ListItemAvatar, ListItemText, Stack, TextField, Typography } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
@@ -59,21 +58,11 @@ export default function MessagePane({
     errors: {},
   };
 
-  const [messages, setMessages] = useState<Message[]>(messageData);
+  // const [messages, setMessages] = useState<Message[]>(messageData);
   const [state, action] = useFormState(handleSendMessage, paneState);
 
   // message box hooks
   const [input, setInput] = useState<string>('');
-
-  const messagesEndRef = useRef<null | HTMLDivElement>(null)
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
-
-  useEffect(() => {
-    scrollToBottom()
-  }, [messages]);
 
 
 
