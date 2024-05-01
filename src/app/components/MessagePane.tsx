@@ -12,15 +12,6 @@ import { useFormState } from "react-dom";
 import MessageStack from "./MessageStack";
 import { createDecipheriv, createHash } from "crypto";
 
-export interface Message {
-  id: string;
-  timestamp: Date;
-  content: string | null;
-  authorID: string;
-  authorName: string;
-  channelID: string;
-}
-
 export interface PaneState {
   messages: any[];
   email: string;

@@ -1,33 +1,32 @@
 import { Avatar, Card, CardContent, CardHeader, Grid, Typography } from "@mui/material";
-import { Message } from "./MessagePane";
 import { cache, useEffect, useRef } from "react";
 import { getAndDecryptMessages } from "../lib/actions";
+import { Prisma } from "@prisma/client";
+import { getUser } from "../lib/database";
 
-export const getMessages = cache(async (channelID: string) => {
-  const messages = await getAndDecryptMessages(channelID);
-  return messages;
+
+export interface Message {
+  id: string;
+  timestamp: Date;
+  content: string | null;
+  authorID: string;
+  channelID: string;
+}
+
+const getUsername = cache(async (authorID: string) => {
+  const user = await getUser(authorID);
+  return user?.name || 'Unknown';
 })
 
-
 export default async function MessageCard({
-  channelID
+  message
 }: {
-  channelID: string;
+  message: Message
   }
   ) {
-    const messagesEndRef = useRef<null | HTMLDivElement>(null)
-
-    const scrollToBottom = () => {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-    }
-
-    useEffect(() => {
-      scrollToBottom()
-    }, [await getMessages(channelID)]);
+  const username = await getUsername(message.authorID);
   return (
     <>
-      {(await getMessages(channelID)).map((message) => (
-        // const author = await getUser(message.authorID)
         <Card>
           <CardHeader
             avatar={
@@ -36,11 +35,11 @@ export default async function MessageCard({
                   backgroundColor: 'rgba(0, 0, 255, 0.75)',
                 }}>
                 <Typography variant="h6" color={'white'}>
-                  {message.authorName?.[0]}
+                  {username[0]}
                 </Typography>
               </Avatar>
             }
-            title={message.authorName}
+            title={username}
             subheader={message.timestamp.toLocaleString()}
           >
           </CardHeader>
@@ -50,9 +49,6 @@ export default async function MessageCard({
             </Typography>
           </CardContent>
         </Card>
-      )
-    )}
-    <div ref={messagesEndRef} />
     </>
   );
 }
