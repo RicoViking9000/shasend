@@ -8,7 +8,7 @@ import { createChannel, createMessage, createMessageAndAddToChannel, getMessages
 import { cookies } from 'next/headers';
 import { decrypt } from './session';
 import React from 'react';
-import { PaneState } from '../components/MessagePane';
+import { Message, PaneState, b_Message } from '../components/MessagePane';
 import { createCipheriv, createDecipheriv, createHash } from 'crypto';
 import { unstable_noStore as noStore, revalidatePath } from 'next/cache';
  
@@ -96,8 +96,8 @@ export async function handleCreateChannel(
 }
 
 export async function handleSendMessage(
-  prevState: PaneState,
-  formData: FormData,
+  prevState: PaneState | any,
+  formData: FormData | any,
 ) {
   const parsedCredentials = z
     .object({ 
@@ -111,7 +111,7 @@ export async function handleSendMessage(
       console.log(parsedCredentials.error.flatten().fieldErrors)
     return {
       messages: prevState.messages,
-      email: prevState.email,
+      user: prevState.user,
       channelID: prevState.channelID,
       errors: parsedCredentials.error.flatten().fieldErrors,
     };
@@ -119,7 +119,8 @@ export async function handleSendMessage(
 
   const { content } = parsedCredentials.data;
 
-  const user = await getUserByEmail(prevState.email);
+  // const user = await getUserByEmail(prevState.email);
+  const user = prevState.user;
 
   const key = createHash('sha256').update(String(user?.id)).digest('base64').slice(0, 24);
   const cipher = createCipheriv('aes-192-cbc', key, Buffer.from('a1b2c3d4e5f6g7h8'));
@@ -131,7 +132,7 @@ export async function handleSendMessage(
     encrypted,
   );
 
-  redirect(`/channels/${prevState.channelID}`);
+  // redirect(`/channels/${prevState.channelID}`);
   return {
     messages: [...prevState.messages, message],
     email: prevState.email,
@@ -142,7 +143,7 @@ export async function handleSendMessage(
 
 export async function getAndDecryptMessages(channelID: string) {
   noStore()
-  const messageData = await getMessagesByChannel(channelID);
+  const messageData: b_Message[] = await getMessagesByChannel(channelID);
   const decryptedMessages = await Promise.all(messageData.map(async message => {
     const user = await getUser(message.authorID);
     const key = createHash('sha256').update(String(user?.id)).digest('base64').slice(0, 24);

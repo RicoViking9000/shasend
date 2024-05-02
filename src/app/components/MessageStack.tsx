@@ -1,7 +1,7 @@
 
 import { Divider, Stack } from "@mui/material";
 import MessageCard, { Message } from "./MessageCard";
-import { Suspense, cache, useEffect, useRef, useState } from "react";
+import { Suspense, cache } from "react";
 import { getAndDecryptMessages } from "../lib/actions";
 import MessageCardSkeleton from "./MessageCardSkeleton";
 
@@ -12,18 +12,18 @@ export const getMessages = cache(async (channelID: string) => {
 })
 
 export default async function MessageStack(
-  { channelID }: { channelID: string }
+  { messages }: { messages: Message[] },
 ) {
 
-  const messagesEndRef = useRef<null | HTMLDivElement>(null)
+  // const messagesEndRef = useRef<null | HTMLDivElement>(null)
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
+  // const scrollToBottom = () => {
+  //   messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  // }
 
-  useEffect(() => {
-    scrollToBottom()
-  }, [await getMessages(channelID)]);
+  // useEffect(() => {
+  //   scrollToBottom()
+  // }, [await getMessages(channelID)]);
   
   return (
     <Stack
@@ -36,13 +36,13 @@ export default async function MessageStack(
           <MessageCardSkeleton />
         ))
       } >
-        {(await getMessages(channelID)).map((message: Message) => (
+        {messages.map((message: Message) => (
           <MessageCard
             message={message}
           />
         ))}
       </Suspense>
-      <div ref={messagesEndRef} />
+      {/* <div ref={messagesEndRef} /> */}
     </Stack>
   )
 }

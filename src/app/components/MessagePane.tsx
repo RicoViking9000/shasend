@@ -2,7 +2,7 @@
 import { Avatar, Box, Button, Card, CardContent, Divider, Grid, List, ListItem, ListItemAvatar, ListItemText, Skeleton, Stack, TextField, Typography } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import { faker } from '@faker-js/faker';
-import React, { Suspense, use, useEffect, useRef, useState} from "react";
+import React, { Suspense, cache, use, useEffect, useOptimistic, useRef, useState} from "react";
 import { unstable_noStore as noStore } from "next/cache";
 import MessageBox from "./MessageBox";
 import MessageCard from "./MessageCard";
@@ -11,15 +11,33 @@ import { getAndDecryptMessages, handleSendMessage } from "../lib/actions";
 import { useFormState } from "react-dom";
 import MessageStack from "./MessageStack";
 import { createDecipheriv, createHash } from "crypto";
+import { Prisma } from "@prisma/client";
 
 export interface PaneState {
   messages: any[];
-  email: string;
+  user: Object;
   channelID: string;
   errors: Object;
 }
 
-export default function MessagePane({
+export interface Message {
+  id: string;
+  timestamp: Date;
+  content: string;
+  authorID: string;
+  authorName: string;
+  channelID: string;
+}
+
+export interface b_Message {
+  id: string;
+  timestamp: Date;
+  content: string | null;
+  authorID: string;
+  channelID: string;
+}
+
+export default async function MessagePane({
   channelID,
   loggedInEmail,
   messageData,
@@ -31,29 +49,50 @@ export default function MessagePane({
 
   noStore();
 
-  // var dummyData = []
-  // for (let i = 0; i < 25; i++) {
-  //   dummyData.push({
-  //     content: faker.lorem.paragraph(),
-  //     username: faker.internet.userName(),
-  //     timestamp: faker.date.anytime().toDateString(),
-  //   });
-  // }
-
-  // var messageData = await getMessagesByChannel(channelID);
-
   const paneState: PaneState = {
     messages: messageData,
-    email: loggedInEmail,
+    user: {},
     channelID: channelID,
     errors: {},
   };
 
-  // const [messages, setMessages] = useState<Message[]>(messageData);
-  const [state, action] = useFormState(handleSendMessage, paneState);
+  const getMessages = cache(async (channelID: string) => {
+    const messages = await getAndDecryptMessages(channelID);
+    return messages;
+  })
+  var messages = await getMessages(channelID);
 
-  // message box hooks
-  const [input, setInput] = useState<string>('');
+  const [optimisticMessages, addOptimisticMessage] = useOptimistic<Message[], any>(
+    messages,
+    (state, newMessage: any) => [
+      ...state,
+      {
+        id: 'optimistic',
+        timestamp: new Date(),
+        content: newMessage.content,
+        authorID: newMessage.authorID,
+        authorName: newMessage.authorName,
+        channelID: newMessage.channelID,
+      }
+    ]
+  )
+
+  async function sendMessage(formData: FormData) {
+    const user = await getUserByEmail(loggedInEmail);
+    const newState = {...paneState, user: user};
+    addOptimisticMessage({
+      id: 'optimistic',
+      timestamp: new Date(),
+      content: formData.get('message') as string,
+      authorID: user?.id,
+      authorName: user?.name,
+      channelID: channelID,
+    });
+    await handleSendMessage(newState, formData);
+  }
+
+  // const [messages, setMessages] = useState<Message[]>(messageData);
+  // const [state, action] = useFormState(handleSendMessage, paneState);
 
 
 
@@ -72,7 +111,7 @@ export default function MessagePane({
         marginY: '0.33rem',
       }}
     >
-      <MessageStack channelID={channelID} />
+      <MessageStack messages={optimisticMessages} />
       
     </Box>
     <Box
@@ -89,11 +128,15 @@ export default function MessagePane({
         marginY: '0.33rem',
       }}
     >
-      <Box component="form" noValidate action={action} sx={{ mt: 3 }}>
-        <MessageBox
-          setInput={setInput}
-          input={input}
-        />
+      <Box
+        component="form"
+        action={async (formData: FormData) => {
+          sendMessage(formData);
+        }}
+        noValidate
+        sx={{ mt: 3 }}
+      >
+        <MessageBox />
       </Box>
     </Box></>
   );
