@@ -1,14 +1,15 @@
-'use client'
-
-import { Box, TextField } from "@mui/material";
-import { startTransition, useState, useTransition } from "react";
-import { handleSendMessage } from "../lib/actions";
+import { TextField } from "@mui/material";
+import { useState } from "react";
 
 export default function MessageBox(
-  // { onSubmit }: { onSubmit: (message: string) => void }
+  {
+    input,
+    setInput,
+  }: {
+    input: string;
+    setInput: (input: string) => void;
+  }
 ) {
-
-  const [input, setInput] = useState<string>('');
 
   return (
     <TextField
