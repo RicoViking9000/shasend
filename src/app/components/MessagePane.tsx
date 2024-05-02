@@ -12,6 +12,7 @@ import { useFormState } from "react-dom";
 import MessageStack from "./MessageStack";
 import { createDecipheriv, createHash } from "crypto";
 import { Prisma } from "@prisma/client";
+import { get } from "jquery";
 
 export interface PaneState {
   messages: any[];
@@ -56,14 +57,24 @@ export default async function MessagePane({
     errors: {},
   };
 
-  const getMessages = cache(async (channelID: string) => {
+  const fetchMessages = cache(async (channelID: string) => {
     const messages = await getAndDecryptMessages(channelID);
     return messages;
   })
-  var messages = await getMessages(channelID);
+
+  var messages;
+  const getMessages: (channelID: string) => Promise<Message[]> = (channelID) => {
+    return fetchMessages(channelID).then((data) => {
+      return data;
+    });
+  }
+
+  getMessages(channelID);
+
+  
 
   const [optimisticMessages, addOptimisticMessage] = useOptimistic<Message[], any>(
-    messages,
+    getMessages(channelID),
     (state, newMessage: any) => [
       ...state,
       {
