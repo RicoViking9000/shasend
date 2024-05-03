@@ -1,4 +1,5 @@
-import { Grid, List } from "@mui/material";
+import { List } from "@mui/material";
+import Grid from "@mui/material/Unstable_Grid2";
 import email from "next-auth/providers/email";
 import { Suspense } from "react";
 import MessagePane from "../components/MessagePane";

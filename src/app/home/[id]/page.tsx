@@ -1,5 +1,4 @@
 
-import Grid from '@mui/material/Unstable_Grid2';
 import React, { Suspense } from "react";
 import UserList from "../../components/UserList";
 import MessagePane from "../../components/MessagePane";

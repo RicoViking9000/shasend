@@ -7,7 +7,7 @@ import discord from 'next-auth/providers/discord';
 import { getUserByEmail } from './app/lib/database';
 import { Cipher, createCipheriv, createDecipheriv, createHash } from 'crypto';
 import { createUser } from './app/lib/database';
-import { createSession } from './app/lib/session';
+import { createSession, getSession } from './app/lib/session';
 import { redirect } from 'next/navigation';
 // import { sql } from '@vercel/postgres';
 // import type { User } from '@/app/lib/definitions';
@@ -52,6 +52,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             const decipher = createDecipheriv('aes-192-cbc', key, Buffer.from('a1b2c3d4e5f6g7h8'));
             const decryptedPassword = user.password ? decipher.update(user.password, 'hex', 'utf8') + decipher.final('utf8') : '';
             const passwordsMatch = password === decryptedPassword;
+
+            // refresh session if invalid
+            try {
+              getSession();
+            } catch (error) {
+              await createSession(user.id);
+            }
 
             if (passwordsMatch) return user;
           }

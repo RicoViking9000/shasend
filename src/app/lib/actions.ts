@@ -6,7 +6,7 @@ import { AuthError } from 'next-auth';
 import { z } from 'zod';
 import { createChannel, createMessage, createMessageAndAddToChannel, getMessagesByChannel, getUser, getUserByEmail, prisma } from './database';
 import { cookies } from 'next/headers';
-import { decrypt } from './session';
+import { decrypt, getSession } from './session';
 import React from 'react';
 import { PaneState } from '../components/MessagePane';
 import { createCipheriv, createDecipheriv, createHash } from 'crypto';
@@ -56,10 +56,10 @@ export async function handleCreateChannel(
       };
     }
 
-    const cookie = cookies().get('session')?.value
-    const session = await decrypt(cookie)
-    const userID: any = session?.userId
-    const user = await getUser(userID)
+    // const session = await getSession()
+    // const userID: any = session?.userId
+    const hostEmail = prevState
+    const user = await getUserByEmail(hostEmail as string);
     if (!user) {
       return {
         message: 'Issue retrieving your information.',
@@ -87,7 +87,7 @@ export async function handleCreateChannel(
     }
 
     revalidatePath(`/channels/${channel.id}`);
-    return 'success';
+    return {message: 'success'};
 
 
   } catch (error) {

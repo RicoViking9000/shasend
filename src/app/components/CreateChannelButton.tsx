@@ -13,9 +13,13 @@ import { useFormState } from 'react-dom';
 import { handleCreateChannel } from '../lib/actions';
 import { Box } from '@mui/material';
 
-export default function CreateChannelButton() {
+export default function CreateChannelButton({
+  email
+}: {
+  email: string;
+}) {
   const [open, setOpen] = React.useState(false);
-  const [state, action] = useFormState(handleCreateChannel, undefined);
+  const [state, action] = useFormState(handleCreateChannel, email);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -44,9 +48,6 @@ export default function CreateChannelButton() {
             event.preventDefault();
             const formData = new FormData(event.currentTarget);
             action(formData);
-            if (state === 'success') {
-              handleClose();
-            }
           },
         }}
       >
@@ -67,7 +68,7 @@ export default function CreateChannelButton() {
             variant="standard"
             autoComplete='off'
           />
-          {typeof state === 'string' && <p>{state}</p>}
+          {typeof state === 'string' && !(state === email) && <p>{state}</p>}
           {typeof state === 'object' && state.errors && <p>{state.errors.email}</p>}
           {typeof state === 'object' && state.message && <p>{state.message}</p>}
         </DialogContent>

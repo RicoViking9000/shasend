@@ -55,7 +55,7 @@ export default async function UserList({
       overflow: 'scroll',
       padding: '1%',
     }}>
-      <CreateChannelButton />
+      <CreateChannelButton email={email} />
       {channels.map(async (channel, index) =>  {
         const channelUsernamesWithoutSelf = await getChannelUsernamesWithoutSelf(channel, loggedInID || '');
         const lastActive = (await getMostRecentMessageByChannel(channel.id))?.timestamp;
