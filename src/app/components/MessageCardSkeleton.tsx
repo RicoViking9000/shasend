@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, Skeleton, Typography } from "@mui/material";
+import { randomUUID } from "crypto";
 
 export default function MessageCardSkeleton() {
   return (
-    <Card>
+    <Card key={randomUUID()}>
       <CardHeader
         avatar={
           <Skeleton variant="circular" width={40} height={40} animation="wave"/>

@@ -6,6 +6,7 @@ import UserEntrySkeleton from "../components/UserEntrySkeleton";
 import UserList from "../components/UserList";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { randomUUID } from "crypto";
 
 export default async function HomeLayout({ children }: { children: React.ReactNode }) {
 
@@ -33,7 +34,7 @@ export default async function HomeLayout({ children }: { children: React.ReactNo
                 maxHeight: '98vh',
                 overflow: 'scroll',
                 padding: '1%',
-              }}>
+              }} key={randomUUID()}>
                 <UserEntrySkeleton />
               </List>
             ))
