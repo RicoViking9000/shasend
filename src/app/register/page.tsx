@@ -71,6 +71,7 @@ export default function SignUp() {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                placeholder='user@email.com'
               />
                {state?.errors?.email && <p>{state.errors.email}</p>}
             </Grid>
@@ -83,6 +84,7 @@ export default function SignUp() {
                 type="password"
                 id="password"
                 autoComplete="new-password"
+                placeholder='At least 6 characters'
               />
                {state?.errors?.password && (
                 <div>
