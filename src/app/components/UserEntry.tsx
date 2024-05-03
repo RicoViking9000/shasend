@@ -32,10 +32,13 @@ export default function UserEntry({
       }}>
         <ListItemAvatar>
           <Avatar sx={{ 
-              transform: 'scale(1.15)',
+              transform: 'scale(1.25)',
               backgroundColor: 'rgba(0, 0, 255, 0.75)',
             }}>
-            <Typography variant="h6" color={'white'}>
+            <Typography variant="h6" color={'white'} sx={{
+              transform: 'scale(1.25)',
+            
+            }}>
               {displayName[0]}
             </Typography>
           </Avatar>

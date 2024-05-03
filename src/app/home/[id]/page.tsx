@@ -22,32 +22,6 @@ export default async function Home({ params }: {params: {id: string}}) {
 
 
   return (
-    // <ThemeWrapper>
-    // <SessionProvider>
-      <Grid container spacing={3}>
-        <Grid>
-        <Suspense fallback={
-            new Array(6).fill(0).map((_) => (
-              <List sx={{ 
-                width: '100%',
-                minWidth: '17vw',
-                maxWidth: "17vw",
-                maxHeight: '98vh',
-                overflow: 'scroll',
-                padding: '1%',
-              }}>
-                <UserEntrySkeleton />
-              </List>
-            ))
-          }>
-          <UserList email={email}/>
-        </Suspense>
-        </Grid>
-        <Grid>
-          <MessagePane channelID={params.id} loggedInEmail={email} messageData={messagesWithMappedAuthors} />
-        </Grid>
-      </Grid>
-    // </SessionProvider>
-    // </ThemeWrapper>
+    <MessagePane channelID={params.id} loggedInEmail={email} messageData={messagesWithMappedAuthors} />
   );
 }

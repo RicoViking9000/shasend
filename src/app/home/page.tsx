@@ -18,32 +18,10 @@ export default async function Home() {
   const email = session.user?.email || "";
 
   return (
-    <Grid container spacing={3}>
-      <Grid>
-        <Suspense fallback={
-            new Array(6).fill(0).map((_) => (
-              <List sx={{ 
-                width: '100%',
-                minWidth: '17vw',
-                maxWidth: "17vw",
-                maxHeight: '98vh',
-                overflow: 'scroll',
-                padding: '1%',
-              }}>
-                <UserEntrySkeleton />
-              </List>
-            ))
-          }>
-          <UserList email={email}/>
-        </Suspense>
-      </Grid>
-      <Grid sx={{
-        marginTop: '10vh',
-      }}>
-        <Typography variant="h2">Welcome to Shasend</Typography>
-        <Typography variant="h5">Select or create a channel from the left pane</Typography>
-      </Grid>
-    </Grid>
+    <>
+    <Typography variant="h2" sx={{marginTop: '10vh'}}>Welcome to Shasend</Typography>
+    <Typography variant="h5">Select or create a channel from the left pane</Typography>
+    </>
   );
 }
 
