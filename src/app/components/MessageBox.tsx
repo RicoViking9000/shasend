@@ -20,7 +20,7 @@ export default function MessageBox(
   // var messagesEndRef = useRef<null | HTMLElement>(document.getElementById('messageEnd'))
 
   const scrollToBottom = () => {
-    document.getElementById('messageEnd')?.scrollIntoView({ behavior: "smooth" })
+    document.getElementById('messageEnd')?.scrollIntoView({ behavior: "auto" })
     // console.log(messagesEndRef.current)
   }
 
