@@ -65,6 +65,7 @@ export default async function UserList({
             displayName={channelUsernamesWithoutSelf.join(', ') || ""}
             lastActive={lastActive ? lastActive.toLocaleString() : ""}
             channelID={channel.id}
+            key={channel.id}
           />
         );
       })}

@@ -4,6 +4,7 @@ import MessageCard, { Message } from "./MessageCard";
 import { Suspense, cache, useEffect, useRef, useState } from "react";
 import { getAndDecryptMessages } from "../lib/actions";
 import MessageCardSkeleton from "./MessageCardSkeleton";
+import { randomUUID } from "crypto";
 
 
 export const getMessages = cache(async (channelID: string) => {
@@ -36,12 +37,13 @@ export default async function MessageStack(
     >
       <Suspense fallback={
         new Array(5).fill(0).map((_) => (
-          <MessageCardSkeleton />
+          <MessageCardSkeleton key={randomUUID()} />
         ))
       } >
         {(await getMessages(channelID)).map((message: Message) => (
           <MessageCard
             message={message}
+            key={message.id}
           />
         ))}
       </Suspense>

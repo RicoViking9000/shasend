@@ -26,18 +26,20 @@ export default async function HomeLayout({ children }: { children: React.ReactNo
       }}>
         <Grid>
           <Suspense fallback={
-            new Array(6).fill(0).map((_) => (
-              <List sx={{ 
-                width: '100%',
-                minWidth: '17vw',
-                maxWidth: "17vw",
-                maxHeight: '98vh',
-                overflow: 'scroll',
-                padding: '1%',
-              }} key={randomUUID()}>
-                <UserEntrySkeleton />
-              </List>
-            ))
+            <List sx={{
+              width: '100%',
+              minWidth: '17vw',
+              maxWidth: "17vw",
+              maxHeight: '98vh',
+              overflow: 'scroll',
+              padding: '1%',
+            }}>
+              <>
+                {new Array(6).fill(0).map((_) => (
+                  <UserEntrySkeleton key={randomUUID()}/>
+                ))}
+              </>
+            </List>
           }>
             <UserList email={email}/>
           </Suspense>

@@ -27,7 +27,7 @@ export default async function MessageCard({
   const username = await getUsername(message.authorID);
   return (
     <>
-        <Card key={message.id}>
+        <Card>
           <CardHeader
             avatar={
               <Avatar sx={{ 

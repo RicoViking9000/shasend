@@ -3,7 +3,7 @@ import { randomUUID } from "crypto";
 
 export default function MessageCardSkeleton() {
   return (
-    <Card key={randomUUID()}>
+    <Card>
       <CardHeader
         avatar={
           <Skeleton variant="circular" width={40} height={40} animation="wave"/>
