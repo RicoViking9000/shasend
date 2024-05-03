@@ -17,11 +17,15 @@ export default function MessageBox(
 
   const [isPending, startTransition] = useTransition();
 
-  const messagesEndRef = useRef<null | HTMLElement>(document.getElementById('messageEnd'))
+  // var messagesEndRef = useRef<null | HTMLElement>(document.getElementById('messageEnd'))
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    document.getElementById('messageEnd')?.scrollIntoView({ behavior: "smooth" })
+    // console.log(messagesEndRef.current)
   }
+
+  // on page load
+  scrollToBottom()
 
   useEffect(() => {
     scrollToBottom()
@@ -41,7 +45,8 @@ export default function MessageBox(
         name="message"
         autoComplete="off"
         value={input}
-        autoFocus
+        // autoFocus
+        onFocus={scrollToBottom}
         disabled={isPending}
         // onKeyDown={handleKeyDown}
         sx={{

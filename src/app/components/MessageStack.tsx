@@ -42,7 +42,6 @@ export default async function MessageStack(
           />
         ))}
       </Suspense>
-      {/* <div ref={messagesEndRef} /> */}
     </Stack>
   )
 }

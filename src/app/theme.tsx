@@ -10,7 +10,7 @@ export function ThemeWrapper(props: { children: React.ReactNode }) {
         () =>
         createTheme({
             palette: {
-            mode: 'dark',//prefersDarkMode ? 'dark' : 'light',
+                mode: prefersDarkMode ? 'dark' : 'light',
             },
         }),
         [prefersDarkMode],

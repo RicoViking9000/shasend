@@ -20,6 +20,14 @@ export default function UserEntry({
           backgroundColor: 'rgba(0, 0, 0, 0.5)',
           transitionDuration: '0.5s',
         },
+        "a:visited": {
+          color: 'white',
+          textDecoration: 'none',
+        },
+        "a": {
+          textDecoration: 'none',
+          color: 'white',
+        }
       }}>
         <ListItemAvatar>
           <Avatar sx={{ 
