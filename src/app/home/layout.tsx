@@ -19,7 +19,7 @@ export default async function HomeLayout({ children }: { children: React.ReactNo
   
     return (
       <Grid container spacing={3} sx={{
-        height: '100vh',
+        height: '99vh',
         width: '100vw',
         display: 'flex',
         justifyContent: 'center',

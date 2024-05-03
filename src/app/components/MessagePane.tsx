@@ -60,7 +60,7 @@ export default function MessagePane({
         width: '100%',
         minWidth: '78vw',
         maxWidth: "78vw",
-        maxHeight: '90vh',
+        maxHeight: '89vh',
         overflow: 'scroll',
         alignContent: 'flex-start',
         alignSelf: 'flex-end',
