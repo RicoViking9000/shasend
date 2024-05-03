@@ -35,7 +35,7 @@ export default async function MessageStack(
       }}
     >
       <Suspense fallback={
-        new Array(10).fill(0).map((_) => (
+        new Array(5).fill(0).map((_) => (
           <MessageCardSkeleton />
         ))
       } >

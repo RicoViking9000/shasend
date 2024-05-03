@@ -14,8 +14,6 @@ export default function MessageCardSkeleton() {
       <CardContent>
         <Typography color="text.secondary" fontSize={'1.1rem'}>
           <Skeleton variant="text" width={200} animation="wave" />
-          <Skeleton variant="text" width={200} animation="wave" />
-          <Skeleton variant="text" width={200} animation="wave"/>
         </Typography>
       </CardContent>
     </Card>
