@@ -86,6 +86,7 @@ export async function handleCreateChannel(
       });
     }
 
+    revalidatePath(`/channels/${channel.id}`);
     return 'success';
 
 

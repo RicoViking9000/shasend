@@ -9,7 +9,22 @@ import CreateChannelButton from "./CreateChannelButton";
 import { getChannelsByUser, getMostRecentMessageByChannel, getUser, getUserByEmail } from "../lib/database";
 import { useSession } from "next-auth/react";
 import { Session } from "next-auth";
+import { cache } from "react";
 
+
+export const getChannels = cache(async (loggedInID: string) => {
+  const channels = await getChannelsByUser(loggedInID);
+  return channels;
+})
+
+export const getChannelUsernamesWithoutSelf = cache(async (channel: any, loggedInID: string) => {
+  const channelUsernamesWithoutSelf = await Promise.all(channel.userIDs.filter((userID: string) => userID !== loggedInID).map(async (userID: string) => {
+    const user = await getUser(userID);
+    return user?.name;
+  }
+  ));
+  return channelUsernamesWithoutSelf;
+})
 
 export default async function UserList({
   email,
@@ -28,7 +43,7 @@ export default async function UserList({
 
   const loggedInUser = await getUserByEmail(email || '');
   const loggedInID = loggedInUser?.id;
-  const channels = await getChannelsByUser(loggedInID || "")
+  const channels = await getChannels(loggedInID || '');
 
   return (
 
@@ -42,11 +57,7 @@ export default async function UserList({
     }}>
       <CreateChannelButton />
       {channels.map(async (channel, index) =>  {
-        const channelUsernamesWithoutSelf = await Promise.all(channel.userIDs.filter(userID => userID !== loggedInID).map(async userID => {
-          const user = await getUser(userID);
-          return user?.name;
-        }
-        ));
+        const channelUsernamesWithoutSelf = await getChannelUsernamesWithoutSelf(channel, loggedInID || '');
         const lastActive = (await getMostRecentMessageByChannel(channel.id))?.timestamp;
 
         return (
