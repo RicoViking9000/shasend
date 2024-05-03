@@ -50,11 +50,8 @@ export default function MessagePane({
   };
 
   // const [messages, setMessages] = useState<Message[]>(messageData);
-  const [state, action] = useFormState(handleSendMessage, paneState);
 
   // message box hooks
-  const [input, setInput] = useState<string>('');
-
 
 
   return (
@@ -73,7 +70,7 @@ export default function MessagePane({
       }}
     >
       <MessageStack channelID={channelID} />
-      
+      <div id='messageEnd' />
     </Box>
     <Box
       sx={{
@@ -89,12 +86,7 @@ export default function MessagePane({
         marginY: '0.33rem',
       }}
     >
-      <Box component="form" noValidate action={action} sx={{ mt: 3 }}>
-        <MessageBox
-          setInput={setInput}
-          input={input}
-        />
-      </Box>
+    <MessageBox paneState={paneState}/>
     </Box></>
   );
 }

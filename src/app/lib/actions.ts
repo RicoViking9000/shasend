@@ -131,7 +131,8 @@ export async function handleSendMessage(
     encrypted,
   );
 
-  redirect(`/channels/${prevState.channelID}`);
+  revalidatePath(`/channels/${prevState.channelID}`);
+  // redirect(`/channels/${prevState.channelID}`);
   return {
     messages: [...prevState.messages, message],
     email: prevState.email,

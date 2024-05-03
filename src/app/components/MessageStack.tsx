@@ -15,15 +15,15 @@ export default async function MessageStack(
   { channelID }: { channelID: string }
 ) {
 
-  const messagesEndRef = useRef<null | HTMLDivElement>(null)
+  // const messagesEndRef = useRef<null | HTMLDivElement>(null)
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
+  // const scrollToBottom = () => {
+  //   messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  // }
 
-  useEffect(() => {
-    scrollToBottom()
-  }, [await getMessages(channelID)]);
+  // useEffect(() => {
+  //   scrollToBottom()
+  // }, [await getMessages(channelID)]);
   
   return (
     <Stack
@@ -42,7 +42,7 @@ export default async function MessageStack(
           />
         ))}
       </Suspense>
-      <div ref={messagesEndRef} />
+      {/* <div ref={messagesEndRef} /> */}
     </Stack>
   )
 }
