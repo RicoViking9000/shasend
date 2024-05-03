@@ -9,6 +9,8 @@ import { redirect } from "next/navigation";
 import { Box, List, Skeleton, Typography } from '@mui/material';
 import UserEntrySkeleton from '../components/UserEntrySkeleton';
 
+export const revalidate = 20;
+
 export default async function Home() {
 
   const session = await auth();
