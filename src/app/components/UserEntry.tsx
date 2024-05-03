@@ -12,9 +12,10 @@ export default function UserEntry({
   channelID: string;
 }) {
   return (
+
     <Link href={{
       pathname: '/home/' + channelID,
-    }}>
+    }} style={{color: 'white', textDecoration: 'none'}}>
       <ListItem alignItems="flex-start" sx={{
         ":hover": {
           backgroundColor: 'rgba(0, 0, 0, 0.5)',

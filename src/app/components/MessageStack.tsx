@@ -30,6 +30,9 @@ export default async function MessageStack(
       spacing={2}
       direction='column'
       divider={<Divider flexItem />}
+      sx={{
+        marginTop: '1rem',
+      }}
     >
       <Suspense fallback={
         new Array(10).fill(0).map((_) => (

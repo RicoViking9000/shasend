@@ -58,15 +58,15 @@ export default function MessagePane({
     <><Box id='messagePane'
       sx={{
         width: '100%',
-        minWidth: '77vw',
-        maxWidth: "77vw",
-        maxHeight: '80vh',
+        minWidth: '78vw',
+        maxWidth: "78vw",
+        maxHeight: '90vh',
         overflow: 'scroll',
         alignContent: 'flex-start',
         alignSelf: 'flex-end',
-        padding: '0.5rem',
-        marginX: '1rem',
-        marginY: '0.33rem',
+        paddingX: '0.1rem',
+        marginX: '0.5rem',
+        // marginY: '0.66rem',
       }}
     >
       <MessageStack channelID={channelID} />
@@ -75,18 +75,18 @@ export default function MessagePane({
     <Box
       sx={{
         width: '100%',
-        minWidth: '77vw',
-        maxWidth: "77vw",
-        maxHeight: '18vh',
+        minWidth: '78vw',
+        maxWidth: "78vw",
+        maxHeight: '10vh',
         overflow: 'scroll',
         alignContent: 'flex-start',
         alignSelf: 'flex-end',
-        padding: '0.5rem',
-        marginX: '1rem',
-        marginY: '0.33rem',
+        paddingX: '0.1rem',
+        marginX: '0.5rem',
+        // marginY: '0.15rem',
       }}
     >
-    <MessageBox paneState={paneState}/>
+      <MessageBox paneState={paneState}/>
     </Box></>
   );
 }

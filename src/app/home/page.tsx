@@ -6,7 +6,8 @@ import React, { Suspense } from "react";
 import UserList from "../components/UserList";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import { Skeleton, Typography } from '@mui/material';
+import { List, Skeleton, Typography } from '@mui/material';
+import UserEntrySkeleton from '../components/UserEntrySkeleton';
 
 export default async function Home() {
 
@@ -20,7 +21,18 @@ export default async function Home() {
     <Grid container spacing={3}>
       <Grid>
         <Suspense fallback={
-            <Skeleton variant="rectangular" width="20vw" height="98vh" />
+            new Array(6).fill(0).map((_) => (
+              <List sx={{ 
+                width: '100%',
+                minWidth: '17vw',
+                maxWidth: "17vw",
+                maxHeight: '98vh',
+                overflow: 'scroll',
+                padding: '1%',
+              }}>
+                <UserEntrySkeleton />
+              </List>
+            ))
           }>
           <UserList email={email}/>
         </Suspense>
@@ -28,8 +40,8 @@ export default async function Home() {
       <Grid sx={{
         marginTop: '10vh',
       }}>
-        <Typography variant="h3">Welcome to Shasend</Typography>
-        <Typography variant="h6">Select or create a channel on the left pane</Typography>
+        <Typography variant="h2">Welcome to Shasend</Typography>
+        <Typography variant="h5">Select or create a channel from the left pane</Typography>
       </Grid>
     </Grid>
   );

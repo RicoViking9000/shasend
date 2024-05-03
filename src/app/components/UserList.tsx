@@ -34,8 +34,8 @@ export default async function UserList({
 
     <List sx={{ 
       width: '100%',
-      minWidth: '20vw',
-      maxWidth: "20vw",
+      minWidth: '17vw',
+      maxWidth: "17vw",
       maxHeight: '98vh',
       overflow: 'scroll',
       padding: '1%',

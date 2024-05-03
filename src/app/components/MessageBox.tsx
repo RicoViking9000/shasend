@@ -38,7 +38,7 @@ export default function MessageBox(
   }
 
   return (
-    <Box component="form" id="messageBox" noValidate action={action} onSubmit={clearInput} sx={{ mt: 3 }}>
+    <Box component="form" id="messageBox" noValidate action={action} onSubmit={clearInput} sx={{ mt: 3, marginY: '0.25%' }}>
       <TextField
         id="message"
         label="Send a message"
@@ -52,6 +52,7 @@ export default function MessageBox(
         sx={{
           width: '100%',
           height: '100%',
+          marginY: '0.25%'
         }}
         onChange={(e) => setInput(e.target.value)}
       />

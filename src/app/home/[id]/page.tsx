@@ -6,7 +6,8 @@ import MessagePane from "../../components/MessagePane";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { getAndDecryptMessages } from '@/app/lib/actions';
-import { Skeleton } from '@mui/material';
+import { List, Skeleton } from '@mui/material';
+import UserEntrySkeleton from '@/app/components/UserEntrySkeleton';
 
 export default async function Home({ params }: {params: {id: string}}) {
 
@@ -25,11 +26,22 @@ export default async function Home({ params }: {params: {id: string}}) {
     // <SessionProvider>
       <Grid container spacing={3}>
         <Grid>
-          <Suspense fallback={
-            <Skeleton variant="rectangular" width="20vw" height="98vh" />
+        <Suspense fallback={
+            new Array(6).fill(0).map((_) => (
+              <List sx={{ 
+                width: '100%',
+                minWidth: '17vw',
+                maxWidth: "17vw",
+                maxHeight: '98vh',
+                overflow: 'scroll',
+                padding: '1%',
+              }}>
+                <UserEntrySkeleton />
+              </List>
+            ))
           }>
-            <UserList email={email}/>
-          </Suspense>
+          <UserList email={email}/>
+        </Suspense>
         </Grid>
         <Grid>
           <MessagePane channelID={params.id} loggedInEmail={email} messageData={messagesWithMappedAuthors} />
