@@ -96,10 +96,6 @@ export default function SignUp() {
               )}
             </Grid>
             <Grid item xs={12}>
-              <FormControlLabel
-                control={<Checkbox value="allowExtraEmails" color="primary" />}
-                label="I want to receive promotional updates via email, along with 10 Bi Bucks"
-              />
             </Grid>
           </Grid>
           <Button
