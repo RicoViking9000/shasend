@@ -8,6 +8,8 @@ import { getAndDecryptMessages } from '@/app/lib/actions';
 import { List, Skeleton } from '@mui/material';
 import UserEntrySkeleton from '@/app/components/UserEntrySkeleton';
 
+export const revalidate = 20;
+
 export default async function Home({ params }: {params: {id: string}}) {
 
   const session = await auth();
